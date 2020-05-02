@@ -2,8 +2,8 @@ import pymongo
 import time
 from math import sqrt
 
-SPEED = 5
-INTERVAL = 1
+SPEED = 25
+INTERVAL = 0.3
 
 myclient = pymongo.MongoClient("mongodb://mongo:27017/")
 mydb = myclient["groundstation"]
@@ -35,8 +35,8 @@ while 1:
             lng = mission[wp_index]["longitude"]
             wp_index += 1
         else:
-            if distance < meter2deg(SPEED)*2:
-                speed = SPEED/5
+            if distance < meter2deg(SPEED):
+                speed = SPEED/3
             scale_lat = dist_lat/distance
             scale_lng = dist_lng/distance
 
