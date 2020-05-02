@@ -43,9 +43,6 @@ while 1:
             lat += scale_lat*meter2deg(speed)*INTERVAL
             lng += scale_lng*meter2deg(speed)*INTERVAL
 
-    print(lat,lng)
-
-
     drones.update_one({"_id":0},{"$set":{"position":{"latitude":lat, "longitude":lng}}})
     drones.update_one({"_id":0},{"$push":{"trail":{"position": {"latitude":lat, "longitude":lng}}}})
     time.sleep(INTERVAL)
