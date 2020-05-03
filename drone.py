@@ -10,12 +10,12 @@ def meter2deg(meter):
     return meter/111111
 
 time.sleep(1)
-mission = json.loads(requests.get("http://192.168.2.6:5000/api/drones/0/mission").text)["mission"]
+mission = json.loads(requests.get("http://app:5000/api/drones/0/mission").text)["mission"]
 wp_index = 0
 while 1:
-    pos = json.loads(requests.get("http://192.168.2.6:5000/api/drones/0/position").text)["position"]
+    pos = json.loads(requests.get("http://app:5000/api/drones/0/position").text)["position"]
     last_mission = mission
-    mission = json.loads(requests.get("http://192.168.2.6:5000/api/drones/0/mission").text)["mission"]
+    mission = json.loads(requests.get("http://app:5000/api/drones/0/mission").text)["mission"]
     lat = pos["latitude"]
     lng = pos["longitude"]
 
@@ -38,5 +38,5 @@ while 1:
             lat += scale_lat*meter2deg(speed)*INTERVAL
             lng += scale_lng*meter2deg(speed)*INTERVAL
 
-    requests.post("http://192.168.2.6:5000/api/drones/0/position", json={"latitude": lat, "longitude": lng})
+    requests.post("http://app:5000/api/drones/0/position", json={"latitude": lat, "longitude": lng})
     time.sleep(INTERVAL)
