@@ -1,28 +1,23 @@
-import pymongo
 import time
+import requests
+import json
 from math import sqrt
 
 SPEED = 25
 INTERVAL = 0.3
 
-myclient = pymongo.MongoClient("mongodb://mongo:27017/")
-mydb = myclient["groundstation"]
-drones = mydb["drone"]
-
 def meter2deg(meter):
     return meter/111111
 
 time.sleep(1)
-drone = drones.find_one({"_id":0})
-mission = drone["mission"]
+mission = json.loads(requests.get("http://192.168.2.6:5000/api/drones/0/mission").text)["mission"]
 wp_index = 0
 while 1:
-    drone = drones.find_one({"_id":0})
-    pos = drone["position"]
+    pos = json.loads(requests.get("http://192.168.2.6:5000/api/drones/0/position").text)["position"]
+    last_mission = mission
+    mission = json.loads(requests.get("http://192.168.2.6:5000/api/drones/0/mission").text)["mission"]
     lat = pos["latitude"]
     lng = pos["longitude"]
-    last_mission = mission
-    mission = drone["mission"]
 
     if mission == last_mission and len(mission)>0:
         wp = mission[wp_index]
@@ -43,6 +38,5 @@ while 1:
             lat += scale_lat*meter2deg(speed)*INTERVAL
             lng += scale_lng*meter2deg(speed)*INTERVAL
 
-    drones.update_one({"_id":0},{"$set":{"position":{"latitude":lat, "longitude":lng}}})
-    drones.update_one({"_id":0},{"$push":{"trail":{"position": {"latitude":lat, "longitude":lng}}}})
+    requests.post("http://192.168.2.6:5000/api/drones/0/position", json={"latitude": lat, "longitude": lng})
     time.sleep(INTERVAL)
