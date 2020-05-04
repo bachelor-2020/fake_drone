@@ -12,12 +12,12 @@ def meter2deg(meter):
 time.sleep(1)
 mission = json.loads(requests.get("http://app:5000/api/drones/0/mission").text)["mission"]
 wp_index = 0
+pos = json.loads(requests.get("http://app:5000/api/drones/0/position").text)["position"]
+lat = pos["latitude"]
+lng = pos["longitude"]
 while 1:
-    pos = json.loads(requests.get("http://app:5000/api/drones/0/position").text)["position"]
     last_mission = mission
     mission = json.loads(requests.get("http://app:5000/api/drones/0/mission").text)["mission"]
-    lat = pos["latitude"]
-    lng = pos["longitude"]
 
     if mission == last_mission and len(mission)>0:
         wp = mission[wp_index]
