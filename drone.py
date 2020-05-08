@@ -1,3 +1,4 @@
+import os
 import time
 import requests
 import json
@@ -6,18 +7,22 @@ from math import sqrt
 SPEED = 25
 INTERVAL = 0.3
 
+drone_id = os.environ["DRONE_ID"] or 0
+print(drone_id)
+print(f"http://app:5000/api/drones/{drone_id}/mission")
+
 def meter2deg(meter):
     return meter/111111
 
 time.sleep(1)
-mission = json.loads(requests.get("http://app:5000/api/drones/0/mission").text)["mission"]
+mission = json.loads(requests.get(f"http://app:5000/api/drones/{drone_id}/mission").text)["mission"]
 wp_index = 0
-pos = json.loads(requests.get("http://app:5000/api/drones/0/position").text)["position"]
+pos = json.loads(requests.get(f"http://app:5000/api/drones/{drone_id}/position").text)["position"]
 lat = pos["latitude"]
 lng = pos["longitude"]
 while 1:
     last_mission = mission
-    mission = json.loads(requests.get("http://app:5000/api/drones/0/mission").text)["mission"]
+    mission = json.loads(requests.get(f"http://app:5000/api/drones/{drone_id}/mission").text)["mission"]
 
     if mission == last_mission and len(mission)>0:
         wp = mission[wp_index]
@@ -38,5 +43,5 @@ while 1:
             lat += scale_lat*meter2deg(speed)*INTERVAL
             lng += scale_lng*meter2deg(speed)*INTERVAL
 
-    requests.post("http://app:5000/api/drones/0/position", json={"latitude": lat, "longitude": lng})
+    requests.post(f"http://app:5000/api/drones/{drone_id}/position", json={"latitude": lat, "longitude": lng})
     time.sleep(INTERVAL)
