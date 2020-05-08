@@ -9,7 +9,6 @@ INTERVAL = 0.3
 
 drone_id = os.environ["DRONE_ID"] or 0
 print(drone_id)
-print(f"http://app:5000/api/drones/{drone_id}/mission")
 
 def meter2deg(meter):
     return meter/111111
